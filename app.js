@@ -157,7 +157,7 @@
   $('iban').addEventListener('input', function () {
     var s = cleanIban(this.value);
     this.value = s.replace(/(.{4})/g, '$1 ').trim();
-    $('bic-feld').hidden = !s || s.slice(0, 2) === 'DE';
+    $('bic-feld').hidden = s.length < 2 || s.slice(0, 2) === 'DE';   // erst entscheiden, wenn das Länderkürzel vollständig ist
   });
 
   /* ---------- Fehleranzeige ---------- */
