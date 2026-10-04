@@ -1,0 +1,6 @@
+/* NUR FÜR DIE DEMO: Schrift aus dem Demo-Ordner statt aus WordPress, Demo-Hinweis oben */
+@font-face { font-family: "Khand"; font-weight: 400; font-display: swap; src: url("fonts/khand-400.woff2") format("woff2"); }
+@font-face { font-family: "Khand"; font-weight: 600; font-display: swap; src: url("fonts/khand-600.woff2") format("woff2"); }
+@font-face { font-family: "Khand"; font-weight: 700; font-display: swap; src: url("fonts/khand-700.woff2") format("woff2"); }
+.demo-banner { background: var(--accent); color: var(--dark); text-align: center; font-weight: 600; font-size: .95rem; line-height: 1.35; padding: .55rem 1rem; }
+.demo-banner code { font: inherit; white-space: nowrap; }

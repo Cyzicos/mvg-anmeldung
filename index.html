@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mitglied werden – Musikverein Grafenau</title>
+<meta name="description" content="Online-Anmeldung beim Musikverein Grafenau e.V.: Mitgliedschaft, Anmeldung zur Ausbildung und SEPA-Lastschriftmandat.">
+<link rel="icon" href="https://musikverein-grafenau.de/wp-content/uploads/2024/07/musikverein-grafenau-favicon_64.png">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+<div class="demo-banner">DEMO-VERSION zum Ausprobieren. Bitte nur Testdaten eingeben, keine echten Bankdaten. Test-IBAN: <code>DE89 3704 0044 0532 0130 00</code></div>
+
+<header class="top">
+  <div class="top__inner">
+    <a class="top__logo" href="https://musikverein-grafenau.de/" aria-label="Zur Website des Musikverein Grafenau">
+      <img src="https://musikverein-grafenau.de/wp-content/uploads/2024/07/musikverein-grafenau_logo_150.webp" srcset="https://musikverein-grafenau.de/wp-content/uploads/2024/07/musikverein-grafenau_logo_150.webp 1x, https://musikverein-grafenau.de/wp-content/uploads/2024/07/musikverein-grafenau_logo_300.webp 2x" alt="Musikverein Grafenau" width="94" height="75">
+    </a>
+    <a class="top__back" href="https://musikverein-grafenau.de/">Zur Website</a>
+  </div>
+  <div class="top__hero">
+    <h1>Anmeldung</h1>
+    <p>Du willst mitspielen, den Verein unterstützen oder dein Kind zur Ausbildung anmelden? Das dauert etwa fünf Minuten.</p>
+  </div>
+</header>
+
+<main id="inhalt">
+<noscript><p class="notice notice--error">Für das Formular wird JavaScript benötigt. Alternativ kannst du den <a href="https://musikverein-grafenau.de/wp-content/uploads/2026/01/MVG-Mitgliedsantrag_2025.pdf">Antrag als PDF</a> herunterladen.</p></noscript>
+
+<form id="antrag" novalidate autocomplete="on">
+
+  <div class="progress" aria-live="polite">
+    <p id="progress-text" class="progress__text"></p>
+    <div class="progress__bar"><span id="progress-bar"></span></div>
+  </div>
+
+  <!-- Spam-Falle: bitte leer lassen -->
+  <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+  <input type="hidden" name="ts" id="ts">
+
+  <!-- ===== Anliegen ===== -->
+  <section class="step" data-key="anliegen" aria-labelledby="h-anliegen">
+    <h2 id="h-anliegen">Worum geht es dir?</h2>
+
+    <fieldset class="choice-group">
+      <legend class="visually-hidden">Anliegen</legend>
+      <label class="choice"><input type="radio" name="anliegen" value="aktiv" required><span><strong>Ich möchte selbst mitspielen</strong><small>Du wirst aktives Mitglied.</small></span></label>
+      <label class="choice"><input type="radio" name="anliegen" value="foerdernd" required><span><strong>Ich möchte den Verein unterstützen</strong><small>Du wirst förderndes Mitglied und spielst nicht mit.</small></span></label>
+      <label class="choice"><input type="radio" name="anliegen" value="kind" required><span><strong>Ich melde mein Kind zur Ausbildung an</strong><small>Früherziehung, Blockflöte oder Instrument, auch für mehrere Kinder auf einmal. Das gilt auch, wenn dein Kind schon bei uns lernt und die Ausbildung wechselt.</small></span></label>
+    </fieldset>
+
+    <div id="mitglied-frage" class="reveal" hidden>
+      <fieldset class="choice-group choice-group--inline">
+        <legend>Ist ein Elternteil schon Mitglied im Musikverein?</legend>
+        <label class="pill"><input type="radio" name="mitglied_status" value="ja"><span>Ja</span></label>
+        <label class="pill"><input type="radio" name="mitglied_status" value="nein"><span>Nein</span></label>
+        <label class="pill"><input type="radio" name="mitglied_status" value="unklar"><span>Weiß ich nicht</span></label>
+      </fieldset>
+      <p class="hint" id="mitglied-hinweis">Für die Ausbildung ist die Mitgliedschaft eines Elternteils nötig. Das Kind ist automatisch Mitglied und zahlt keinen Mitgliedsbeitrag.</p>
+
+      <div id="eltern-aktiv-frage" hidden>
+        <fieldset class="choice-group choice-group--inline">
+          <legend>Spielst du selbst im Orchester oder in einer Gruppe mit?</legend>
+          <label class="pill"><input type="radio" name="eltern_aktiv" value="ja"><span>Ja</span></label>
+          <label class="pill"><input type="radio" name="eltern_aktiv" value="nein"><span>Nein</span></label>
+        </fieldset>
+        <p class="hint">Wer mitspielt, wird aktives Mitglied. Alle anderen Eltern werden fördernde Mitglieder.</p>
+      </div>
+    </div>
+
+    <div class="actions"><button type="button" class="btn" data-next>Weiter</button></div>
+  </section>
+
+  <!-- ===== Daten ===== -->
+  <section class="step" data-key="daten" aria-labelledby="h-daten" hidden>
+    <h2 id="h-daten">Deine Daten</h2>
+    <p class="lead" id="daten-lead" hidden>Wir ordnen dich über Name und Adresse zu. Bitte gib sie so an wie bei deiner ersten Anmeldung.</p>
+
+    <div data-neu>
+      <fieldset class="choice-group choice-group--inline">
+        <legend>Geschlecht</legend>
+        <label class="pill"><input type="radio" name="geschlecht" value="männlich" required><span>männlich</span></label>
+        <label class="pill"><input type="radio" name="geschlecht" value="weiblich" required><span>weiblich</span></label>
+        <label class="pill"><input type="radio" name="geschlecht" value="divers" required><span>divers</span></label>
+      </fieldset>
+    </div>
+
+    <div class="grid">
+      <div class="field"><label for="vorname">Vorname</label><input id="vorname" name="vorname" required autocomplete="given-name"></div>
+      <div class="field"><label for="name">Nachname</label><input id="name" name="name" required autocomplete="family-name"></div>
+      <div class="field" data-neu><label for="geburtsdatum">Geburtsdatum</label><input id="geburtsdatum" name="geburtsdatum" type="date" required autocomplete="bday" max=""></div>
+      <div class="field"><label for="telefon">Telefon <span class="opt">(optional)</span></label><input id="telefon" name="telefon" type="tel" autocomplete="tel"></div>
+      <div class="field field--wide"><label for="email">E-Mail</label><input id="email" name="email" type="email" required autocomplete="email" inputmode="email"></div>
+      <div class="field field--wide"><label for="strasse">Straße und Hausnummer</label><input id="strasse" name="strasse" required autocomplete="street-address"></div>
+      <div class="field field--plz"><label for="plz">PLZ</label><input id="plz" name="plz" required inputmode="numeric" maxlength="5" autocomplete="postal-code"></div>
+      <div class="field field--ort"><label for="ort">Ort</label><input id="ort" name="ort" required autocomplete="address-level2"></div>
+    </div>
+
+    <div id="vormund" class="reveal" hidden>
+      <p class="notice">Du bist unter 18. Bitte trage hier eine erziehungsberechtigte Person ein. Sie bestätigt die Anmeldung.</p>
+      <div class="field"><label for="erziehungsberechtigt">Vor- und Nachname der erziehungsberechtigten Person</label><input id="erziehungsberechtigt" name="erziehungsberechtigt"></div>
+    </div>
+
+    <div class="actions"><button type="button" class="btn btn--ghost" data-prev>Zurück</button><button type="button" class="btn" data-next>Weiter</button></div>
+  </section>
+
+  <!-- ===== Kind ===== -->
+  <section class="step" data-key="kind" aria-labelledby="h-kind" hidden>
+    <h2 id="h-kind">Dein Kind</h2>
+
+    <div id="kinder"></div>
+
+    <button type="button" class="btn btn--ghost btn--add" id="kind-plus">+ Weiteres Kind hinzufügen</button>
+    <p class="hint">In den Schulferien findet kein Unterricht statt. Die aktuellen Beiträge stehen in der <a href="https://musikverein-grafenau.de/verein/gebuehrenordnung/" target="_blank" rel="noopener">Gebührenordnung</a>.</p>
+
+    <div class="actions"><button type="button" class="btn btn--ghost" data-prev>Zurück</button><button type="button" class="btn" data-next>Weiter</button></div>
+  </section>
+
+  <!-- Vorlage für ein Kind (wird per JavaScript für jedes Kind kopiert) -->
+  <template id="kind-vorlage">
+    <div class="kind">
+      <div class="kind__head"><h3 class="kind__titel">Kind 1</h3><button type="button" class="kind__entfernen">Entfernen</button></div>
+
+      <fieldset class="choice-group choice-group--inline">
+        <legend>Ist das Kind schon bei uns in Ausbildung?</legend>
+        <label class="pill"><input type="radio" data-f="status" value="neu"><span>Nein, ganz neu</span></label>
+        <label class="pill"><input type="radio" data-f="status" value="bestehend"><span>Ja, es wechselt oder ergänzt</span></label>
+      </fieldset>
+
+      <div class="kind__bereich reveal" hidden>
+        <div class="kind__geschlecht">
+          <fieldset class="choice-group choice-group--inline">
+            <legend>Geschlecht des Kindes</legend>
+            <label class="pill"><input type="radio" data-f="geschlecht" value="männlich"><span>männlich</span></label>
+            <label class="pill"><input type="radio" data-f="geschlecht" value="weiblich"><span>weiblich</span></label>
+            <label class="pill"><input type="radio" data-f="geschlecht" value="divers"><span>divers</span></label>
+          </fieldset>
+        </div>
+        <div class="grid">
+          <div class="field"><label data-for="vorname">Vorname</label><input data-f="vorname"></div>
+          <div class="field"><label data-for="name">Nachname</label><input data-f="name"></div>
+          <div class="field"><label data-for="geburtsdatum">Geburtsdatum</label><input data-f="geburtsdatum" type="date"></div>
+          <div class="field kind__bisher"><label data-for="bisher">Bisherige Ausbildung <span class="opt">(optional)</span></label><input data-f="bisher" placeholder="z. B. Früherziehung"></div>
+        </div>
+        <p class="hint">Dein Kind ist automatisch Mitglied und zahlt keinen Mitgliedsbeitrag. Mit 18 wird es selbst Mitglied, als aktives Mitglied weiterhin ohne Beitrag.</p>
+
+        <fieldset class="choice-group">
+          <legend class="kind__kurs-legend">Anmeldung zur</legend>
+          <label class="choice"><input type="radio" data-f="kurs" value="Rhythmisch-musikalische Früherziehung"><span><strong>Rhythmisch-musikalischen Früherziehung</strong><small>Der Kurs ist auf 2 Jahre angelegt. Die Unterrichtsgebühr wird von Oktober des 1. Jahres bis Juli des 2. Jahres eingezogen, also 22 Monate lang.</small></span></label>
+          <label class="choice"><input type="radio" data-f="kurs" value="Blockflötenausbildung"><span><strong>Blockflötenausbildung</strong></span></label>
+          <label class="choice"><input type="radio" data-f="kurs" value="Instrumentalausbildung"><span><strong>Instrumentalausbildung</strong></span></label>
+        </fieldset>
+
+        <div class="kind__instrument reveal" hidden>
+          <div class="field"><label data-for="instrument">Instrument</label><input data-f="instrument" placeholder="z. B. Klarinette, Trompete, Schlagzeug"></div>
+          <fieldset class="choice-group choice-group--inline">
+            <legend>Instrument mieten?</legend>
+            <label class="pill"><input type="radio" data-f="miete" value="ja"><span>ja</span></label>
+            <label class="pill"><input type="radio" data-f="miete" value="nein"><span>nein</span></label>
+          </fieldset>
+        </div>
+
+        <label class="check kind__erm-wahl"><input type="checkbox" data-f="ermaessigung" value="ja"><span>Ein Geschwisterkind ist schon bei uns in Ausbildung <small>(dann gibt es eine Ermäßigung beim Ausbildungsbeitrag)</small></span></label>
+        <p class="notice kind__erm-auto" hidden>Ab dem 2. Kind gibt es automatisch eine Ermäßigung beim Ausbildungsbeitrag.</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ===== Lastschrift ===== -->
+  <section class="step" data-key="bank" aria-labelledby="h-bank" hidden>
+    <h2 id="h-bank">SEPA-Lastschriftmandat</h2>
+    <p class="lead" id="bank-lead">Mitgliedsbeitrag und Ausbildungsbeiträge werden per Lastschrift eingezogen. Das Mandat gilt auch für die Beträge der Jugendausbildung.</p>
+
+    <div id="bank-frage" hidden>
+      <fieldset class="choice-group">
+        <legend>Bankverbindung</legend>
+        <label class="choice"><input type="radio" name="bank_geaendert" value="nein"><span><strong>Wie bisher</strong><small>Wir ziehen die Ausbildungsbeiträge von der Bankverbindung ein, die uns schon vorliegt.</small></span></label>
+        <label class="choice"><input type="radio" name="bank_geaendert" value="ja"><span><strong>Meine Bankverbindung hat sich geändert</strong><small>Dann brauchen wir ein neues Lastschriftmandat.</small></span></label>
+      </fieldset>
+    </div>
+
+    <div id="bank-block">
+      <label class="switch"><input type="checkbox" id="gleich" checked><span>Kontoinhaber ist die Person aus den Daten oben</span></label>
+      <p class="notice" id="ki-minderjaehrig" hidden>Du bist unter 18. Bitte trage als Kontoinhaber eine erziehungsberechtigte Person ein. Sie erteilt das Lastschriftmandat.</p>
+
+      <div id="kontoinhaber" class="reveal" hidden>
+        <div class="grid">
+          <div class="field"><label for="ki_vorname">Vorname</label><input id="ki_vorname" name="ki_vorname"></div>
+          <div class="field"><label for="ki_name">Nachname</label><input id="ki_name" name="ki_name"></div>
+          <div class="field field--wide"><label for="ki_strasse">Straße und Hausnummer</label><input id="ki_strasse" name="ki_strasse"></div>
+          <div class="field field--plz"><label for="ki_plz">PLZ</label><input id="ki_plz" name="ki_plz" maxlength="10"></div>
+          <div class="field field--ort"><label for="ki_ort">Ort</label><input id="ki_ort" name="ki_ort"></div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="field field--wide"><label for="iban">IBAN</label><input id="iban" name="iban" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="DE00 0000 0000 0000 0000 00"></div>
+        <div class="field field--wide"><label for="bank">Name des Kreditinstituts</label><input id="bank" name="bank" required autocomplete="off"></div>
+        <div class="field field--wide" id="bic-feld" hidden><label for="bic">BIC <span class="opt">(bei Konten außerhalb Deutschlands)</span></label><input id="bic" name="bic" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="11"></div>
+      </div>
+
+      <div class="legal">
+        <p>Ich ermächtige den Musikverein Grafenau e.V., Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Musikverein Grafenau e.V. gezogenen Lastschriften einzulösen.</p>
+        <p>Ich kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung des belasteten Betrags verlangen. Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.</p>
+        <p class="legal__id">Gläubiger-Identifikationsnummer: DE47ZZZ00000107569<br>Die Mandatsreferenznummer wird separat mitgeteilt.</p>
+      </div>
+      <label class="check"><input type="checkbox" name="sepa_zustimmung" value="ja" required><span>Ich erteile das SEPA-Lastschriftmandat.</span></label>
+    </div>
+
+    <div class="actions"><button type="button" class="btn btn--ghost" data-prev>Zurück</button><button type="button" class="btn" data-next>Weiter</button></div>
+  </section>
+
+  <!-- ===== Einwilligungen ===== -->
+  <section class="step" data-key="einw" aria-labelledby="h-einw" hidden>
+    <h2 id="h-einw">Einwilligungen</h2>
+
+    <div id="neu-einw" data-neu>
+      <h3>Satzung und Datenschutz</h3>
+      <label class="check"><input type="checkbox" name="satzung" value="ja" required><span>Mit dem Eintritt erkenne ich die <a href="https://musikverein-grafenau.de/verein/satzung-des-musikverein-grafenau-e-v/" target="_blank" rel="noopener">Satzung</a> des Musikverein Grafenau e.V. an.</span></label>
+      <label class="check"><input type="checkbox" name="datenschutz" value="ja" required><span>Von den Datenschutzregelungen gemäß § 15 der Vereinssatzung und der zugehörigen Datenschutzordnung habe ich Kenntnis genommen. Meine Daten werden nach Art. 6 Abs. 1 lit. b DSGVO für die Mitgliederverwaltung verarbeitet. Mehr dazu in der <a href="https://musikverein-grafenau.de/kontakt/datenschutz/" target="_blank" rel="noopener">Datenschutzerklärung</a>.</span></label>
+    </div>
+
+    <h3>Fotos und Videos</h3>
+    <p class="hint">Unsere Berichte leben von Bildern. Wir bitten um deine Erlaubnis, Fotos und Videos <span id="bild-wer">von dir</span> zu veröffentlichen. Die Zustimmung gilt unbefristet bis zum Widerruf (formlos an <a href="mailto:vorstand@musikverein-grafenau.de">vorstand@musikverein-grafenau.de</a>). Bereits veröffentlichte Aufnahmen können im jeweiligen Medium verbleiben. Das Bildmaterial wird unentgeltlich zur Verfügung gestellt.</p>
+
+    <fieldset class="choice-group choice-group--inline">
+      <legend>Bildrechte</legend>
+      <label class="pill"><input type="radio" name="bildrechte" value="ja" required><span>Ja, ich bin einverstanden</span></label>
+      <label class="pill"><input type="radio" name="bildrechte" value="nein" required><span>Nein, ich bin nicht einverstanden</span></label>
+    </fieldset>
+
+    <div id="medien" class="reveal" hidden>
+      <fieldset class="choice-group">
+        <legend>Veröffentlichung erlaubt auf</legend>
+        <label class="check"><input type="checkbox" name="medien[]" value="Homepage"><span>Homepage</span></label>
+        <label class="check"><input type="checkbox" name="medien[]" value="Facebook-Seite"><span>Facebook-Seite</span></label>
+        <label class="check"><input type="checkbox" name="medien[]" value="Vereinszeitschrift fortissimo"><span>Vereinszeitschrift fortissimo</span></label>
+        <label class="check"><input type="checkbox" name="medien[]" value="Mitteilungsblatt der Gemeinde Grafenau"><span>Mitteilungsblatt der Gemeinde Grafenau</span></label>
+      </fieldset>
+    </div>
+
+    <div class="actions"><button type="button" class="btn btn--ghost" data-prev>Zurück</button><button type="button" class="btn" data-next>Weiter</button></div>
+  </section>
+
+  <!-- ===== Prüfen ===== -->
+  <section class="step" data-key="pruefen" aria-labelledby="h-pruefen" hidden>
+    <h2 id="h-pruefen">Prüfen und absenden</h2>
+    <div id="zusammenfassung" class="summary"></div>
+
+    <div class="field"><label for="anmerkung">Anmerkung <span class="opt">(optional)</span></label><textarea id="anmerkung" name="anmerkung" rows="3" maxlength="600" placeholder="z. B. Wunschtermin oder Fragen an den Vorstand"></textarea></div>
+
+    <h3>Bestätigung</h3>
+    <div class="field"><label for="unterschrift" id="unterschrift-label">Vor- und Nachname als Unterschrift</label><input id="unterschrift" name="unterschrift" required autocomplete="name"></div>
+    <label class="check"><input type="checkbox" name="bestaetigt" value="ja" required><span>Ich bestätige, dass die Angaben richtig sind. Mein oben eingegebener Name gilt als Unterschrift.</span></label>
+    <p class="hint">Datum: <span id="heute"></span>. Bei Minderjährigen unterschreibt die erziehungsberechtigte Person.</p>
+
+    <div id="fehler-gesamt" class="notice notice--error" role="alert" hidden></div>
+
+    <div class="actions"><button type="button" class="btn btn--ghost" data-prev>Zurück</button><button type="submit" class="btn btn--primary" id="senden">Anmeldung absenden</button></div>
+  </section>
+
+</form>
+
+<!-- ===== Erfolg ===== -->
+<section id="erfolg" class="done" hidden tabindex="-1" aria-live="polite">
+  <h2>Danke, deine Anmeldung ist angekommen.</h2>
+  <p>Der Vorstand hat deine Anmeldung erhalten und meldet sich bei dir.</p>
+  <p id="erfolg-mandat">Die Mandatsreferenznummer bekommst du separat.</p>
+  <p class="done__actions"><a class="btn" href="https://musikverein-grafenau.de/">Zurück zur Website</a></p>
+</section>
+</main>
+
+<footer class="foot">
+  <p>Musikverein Grafenau e.V. · Sonnenbergstraße 5 · 71120 Grafenau · <a href="mailto:vorstand@musikverein-grafenau.de">vorstand@musikverein-grafenau.de</a></p>
+  <p><a href="https://musikverein-grafenau.de/kontakt/impressum/">Impressum</a> · <a href="https://musikverein-grafenau.de/kontakt/datenschutz/">Datenschutz</a> · <a href="https://musikverein-grafenau.de/wp-content/uploads/2026/01/MVG-Mitgliedsantrag_2025.pdf">Antrag als PDF</a></p>
+</footer>
+
+<script src="demo-mail.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
