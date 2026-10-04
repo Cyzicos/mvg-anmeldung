@@ -141,6 +141,17 @@
   form.addEventListener('change', updateUI);
   form.addEventListener('input', function (e) { if (e.target.name === 'geburtsdatum') updateUI(); });
 
+  /* ---------- Bildrechte: alles mit einem Klick erlauben ---------- */
+  $('bild-alle').addEventListener('click', function () {
+    form.querySelector('[name=bildrechte][value=ja]').click();
+    Array.prototype.forEach.call(form.querySelectorAll('[name="medien[]"]'), function (c) { if (!c.checked) c.click(); });
+    this.textContent = 'Zugestimmt: alle Veröffentlichungen';
+  });
+  form.addEventListener('change', function (e) {   // Beschriftung zurücksetzen, sobald selbst geändert wird
+    if ((e.target.name === 'bildrechte' || e.target.name === 'medien[]') && !e.isTrusted) return;
+    if (e.target.name === 'bildrechte' || e.target.name === 'medien[]') $('bild-alle').textContent = 'Allen Veröffentlichungen zustimmen';
+  });
+
   /* ---------- IBAN ---------- */
   function cleanIban(s) { return (s || '').replace(/\s+/g, '').toUpperCase(); }
   function ibanValid(raw) {
