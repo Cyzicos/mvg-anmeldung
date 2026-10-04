@@ -8,7 +8,7 @@
 (function () {
   'use strict';
 
-  var EMPFAENGER = 'h.vietz@gmail.com';   // zum Testen; später: vorstand@musikverein-grafenau.de
+  var EMPFAENGER = 'vorstand@musikverein-grafenau.de';   // zum Testen z. B. eine eigene Adresse eintragen
   var MIN_SEKUNDEN = 8;
 
   var originalFetch = window.fetch.bind(window);
@@ -159,25 +159,32 @@
 
     window.DEMO_LETZTE_MAIL = { betreff: betreff, text: text };   // zum Prüfen in der Browser-Konsole
     var link = 'mailto:' + EMPFAENGER + '?subject=' + encodeURIComponent(betreff) + '&body=' + encodeURIComponent(text.replace(/\n/g, '\r\n'));
-    ersatzLinks(link, text);
+    erfolgsseite(link, text);
     window.location.href = link;          // öffnet das Mail-Programm mit der fertigen Mail
-    return Promise.resolve({ ok: true }); // danach zeigt app.js die normale Erfolgsseite
+    return Promise.resolve({ ok: true }); // danach zeigt app.js die Erfolgsseite
   }
 
-  /* Kleiner Hinweis auf der Erfolgsseite, falls sich kein Mail-Programm öffnet */
-  function ersatzLinks(link, text) {
-    var alt = document.getElementById('demo-ersatz'); if (alt) alt.remove();
-    var p = document.createElement('p'); p.id = 'demo-ersatz'; p.className = 'hint';
-    p.appendChild(document.createTextNode('Mail-Programm hat sich nicht geöffnet? '));
-    var a = document.createElement('a'); a.href = link; a.textContent = 'Erneut öffnen'; p.appendChild(a);
-    p.appendChild(document.createTextNode(' oder '));
-    var b = document.createElement('a'); b.href = '#'; b.textContent = 'Text kopieren';
-    b.addEventListener('click', function (e) {
-      e.preventDefault();
-      if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { b.textContent = 'Kopiert, bitte an ' + EMPFAENGER + ' schicken'; }, function () {});
-    });
-    p.appendChild(b);
+  /* Erfolgsseite: Der Antrag ist erst angekommen, wenn die Mail abgeschickt wurde */
+  function erfolgsseite(link, text) {
     var erfolg = document.getElementById('erfolg');
-    erfolg.insertBefore(p, erfolg.querySelector('.done__actions'));
+    erfolg.querySelector('h2').textContent = 'Fast fertig. Antrag an deinen Musikverein Grafenau schicken';
+    erfolg.querySelector('p').textContent = 'Dein Mail-Programm hat sich mit dem fertigen Antrag geöffnet. Bitte schick die Mail jetzt ab. Erst dann ist dein Antrag beim Vorstand.';
+
+    var alt = document.getElementById('mail-knoepfe'); if (alt) alt.remove();
+    var box = document.createElement('div'); box.id = 'mail-knoepfe';
+    var knoepfe = document.createElement('p'); knoepfe.className = 'done__actions';
+    var a = document.createElement('a'); a.className = 'btn'; a.href = link; a.textContent = 'Mail-Programm erneut öffnen';
+    var kopie = document.createElement('button'); kopie.type = 'button'; kopie.className = 'btn btn--ghost'; kopie.textContent = 'Antrag als Text kopieren';
+    kopie.addEventListener('click', function () {
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { kopie.textContent = 'Kopiert'; }, function () {});
+    });
+    knoepfe.appendChild(a); knoepfe.appendChild(kopie);
+    var hinweis = document.createElement('p'); hinweis.className = 'hint';
+    hinweis.appendChild(document.createTextNode('Es hat sich kein Mail-Programm geöffnet, oder der Text ist abgeschnitten? Dann kopiere den Antrag und schick ihn per Mail an '));
+    var mail = document.createElement('a'); mail.href = 'mailto:' + EMPFAENGER; mail.textContent = EMPFAENGER;
+    hinweis.appendChild(mail); hinweis.appendChild(document.createTextNode('.'));
+    box.appendChild(knoepfe); box.appendChild(hinweis);
+    erfolg.insertBefore(box, erfolg.querySelector('#erfolg-mandat'));
+    var zurueck = erfolg.querySelector('.done__actions a.btn'); if (zurueck) zurueck.classList.add('btn--ghost');   // Hauptaktion ist das Abschicken
   }
 })();
