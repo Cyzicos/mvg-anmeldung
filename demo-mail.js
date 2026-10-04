@@ -1,13 +1,14 @@
 /* ==========================================================
    NUR FÜR DIE DEMO (GitHub Pages): ersetzt senden.php.
-   Baut dieselbe Mail an den Vorstand wie senden.php und
-   verschickt sie über web3forms.com.
+   Baut dieselbe Mail an den Vorstand wie senden.php, schickt
+   sie aber NICHT selbst ab: Die Daten verlassen den Browser
+   nicht. Die Mail wird angezeigt und kann über das eigene
+   Mail-Programm an den Vorstand geschickt werden.
    ========================================================== */
 (function () {
   'use strict';
 
-  // Access Key von https://web3forms.com (wird an die dort angegebene Adresse geschickt)
-  var WEB3FORMS_KEY = 'HIER-ACCESS-KEY-EINTRAGEN';
+  var EMPFAENGER = 'vorstand@musikverein-grafenau.de';
   var MIN_SEKUNDEN = 8;
 
   var originalFetch = window.fetch.bind(window);
@@ -157,23 +158,33 @@
     var text = z.join('\n') + '\n';
 
     window.DEMO_LETZTE_MAIL = { betreff: betreff, text: text };   // zum Prüfen in der Browser-Konsole
+    zeigeMail('[DEMO] ' + betreff, text);
+    return Promise.resolve({ ok: true });
+  }
 
-    if (WEB3FORMS_KEY.indexOf('HIER-') === 0) {
-      return Promise.resolve({ ok: false, fehler: 'Demo: In demo-mail.js ist noch kein Web3Forms-Access-Key eingetragen.' });
-    }
-    return originalFetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        access_key: WEB3FORMS_KEY,
-        subject: '[DEMO] ' + betreff,
-        from_name: 'Musikverein Grafenau – Online-Anmeldung (Demo)',
-        replyto: email,
-        message: text
-      })
-    })
-      .then(function (r) { return r.json(); })
-      .then(function (res) { return res && res.success ? { ok: true } : { ok: false, fehler: 'Mailversand fehlgeschlagen' + (res && res.message ? ': ' + res.message : '') + '.' }; })
-      .catch(function () { return { ok: false, fehler: 'Mailversand fehlgeschlagen.' }; });
+  /* Erfolgsseite: Mail anzeigen + Button für das eigene Mail-Programm */
+  function zeigeMail(betreff, text) {
+    var erfolg = document.getElementById('erfolg');
+    erfolg.querySelector('h2').textContent = 'Fast fertig: Mail an den Vorstand schicken';
+    erfolg.querySelector('p').textContent = 'Demo: Es wurde noch nichts verschickt. So sieht die Mail aus, die der Vorstand bekommt. Du kannst sie mit deinem eigenen Mail-Programm an den Vorstand schicken.';
+    var alt = document.getElementById('demo-mail'); if (alt) alt.remove();
+
+    var box = document.createElement('div'); box.id = 'demo-mail'; box.className = 'demo-mail';
+    var h = document.createElement('h3'); h.textContent = 'Betreff: ' + betreff;
+    var pre = document.createElement('pre'); pre.textContent = text;
+    var knoepfe = document.createElement('p'); knoepfe.className = 'done__actions';
+    var a = document.createElement('a'); a.className = 'btn';
+    a.href = 'mailto:' + EMPFAENGER + '?subject=' + encodeURIComponent(betreff) + '&body=' + encodeURIComponent(text.replace(/\n/g, '\r\n'));
+    a.textContent = 'Im Mail-Programm öffnen';
+    var kopie = document.createElement('button'); kopie.type = 'button'; kopie.className = 'btn btn--ghost'; kopie.textContent = 'Text kopieren';
+    kopie.addEventListener('click', function () {
+      var fertig = function () { kopie.textContent = 'Kopiert'; };
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(fertig, function () {});
+    });
+    knoepfe.appendChild(a); knoepfe.appendChild(kopie);
+    var hinweis = document.createElement('p'); hinweis.className = 'hint';
+    hinweis.textContent = 'Falls sich kein Mail-Programm öffnet oder der Text abgeschnitten ist: „Text kopieren“ und selbst eine Mail an ' + EMPFAENGER + ' schreiben.';
+    box.appendChild(h); box.appendChild(pre); box.appendChild(knoepfe); box.appendChild(hinweis);
+    erfolg.insertBefore(box, erfolg.querySelector('.done__actions'));
   }
 })();
