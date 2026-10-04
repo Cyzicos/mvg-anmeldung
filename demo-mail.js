@@ -8,7 +8,7 @@
 (function () {
   'use strict';
 
-  var EMPFAENGER = 'vorstand@musikverein-grafenau.de';
+  var EMPFAENGER = 'h.vietz@gmail.com';   // zum Testen; später: vorstand@musikverein-grafenau.de
   var MIN_SEKUNDEN = 8;
 
   var originalFetch = window.fetch.bind(window);
