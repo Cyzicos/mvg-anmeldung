@@ -1,9 +1,9 @@
 /* ==========================================================
    NUR FÜR DIE DEMO (GitHub Pages): ersetzt senden.php.
-   Baut dieselbe Mail an den Vorstand wie senden.php, schickt
-   sie aber NICHT selbst ab: Die Daten verlassen den Browser
-   nicht. Die Mail wird angezeigt und kann über das eigene
-   Mail-Programm an den Vorstand geschickt werden.
+   Baut dieselbe Mail wie senden.php. Ohne Server kann die Seite
+   nicht selbst mailen (und soll keine Daten an Dritte geben),
+   deshalb öffnet sich beim Absenden das eigene Mail-Programm
+   mit der fertigen Mail.
    ========================================================== */
 (function () {
   'use strict';
@@ -158,33 +158,26 @@
     var text = z.join('\n') + '\n';
 
     window.DEMO_LETZTE_MAIL = { betreff: betreff, text: text };   // zum Prüfen in der Browser-Konsole
-    zeigeMail('[DEMO] ' + betreff, text);
-    return Promise.resolve({ ok: true });
+    var link = 'mailto:' + EMPFAENGER + '?subject=' + encodeURIComponent(betreff) + '&body=' + encodeURIComponent(text.replace(/\n/g, '\r\n'));
+    ersatzLinks(link, text);
+    window.location.href = link;          // öffnet das Mail-Programm mit der fertigen Mail
+    return Promise.resolve({ ok: true }); // danach zeigt app.js die normale Erfolgsseite
   }
 
-  /* Erfolgsseite: Mail anzeigen + Button für das eigene Mail-Programm */
-  function zeigeMail(betreff, text) {
-    var erfolg = document.getElementById('erfolg');
-    erfolg.querySelector('h2').textContent = 'Fast fertig: Mail an den Vorstand schicken';
-    erfolg.querySelector('p').textContent = 'Demo: Es wurde noch nichts verschickt. So sieht die Mail aus, die der Vorstand bekommt. Du kannst sie mit deinem eigenen Mail-Programm an den Vorstand schicken.';
-    var alt = document.getElementById('demo-mail'); if (alt) alt.remove();
-
-    var box = document.createElement('div'); box.id = 'demo-mail'; box.className = 'demo-mail';
-    var h = document.createElement('h3'); h.textContent = 'Betreff: ' + betreff;
-    var pre = document.createElement('pre'); pre.textContent = text;
-    var knoepfe = document.createElement('p'); knoepfe.className = 'done__actions';
-    var a = document.createElement('a'); a.className = 'btn';
-    a.href = 'mailto:' + EMPFAENGER + '?subject=' + encodeURIComponent(betreff) + '&body=' + encodeURIComponent(text.replace(/\n/g, '\r\n'));
-    a.textContent = 'Im Mail-Programm öffnen';
-    var kopie = document.createElement('button'); kopie.type = 'button'; kopie.className = 'btn btn--ghost'; kopie.textContent = 'Text kopieren';
-    kopie.addEventListener('click', function () {
-      var fertig = function () { kopie.textContent = 'Kopiert'; };
-      if (navigator.clipboard) navigator.clipboard.writeText(text).then(fertig, function () {});
+  /* Kleiner Hinweis auf der Erfolgsseite, falls sich kein Mail-Programm öffnet */
+  function ersatzLinks(link, text) {
+    var alt = document.getElementById('demo-ersatz'); if (alt) alt.remove();
+    var p = document.createElement('p'); p.id = 'demo-ersatz'; p.className = 'hint';
+    p.appendChild(document.createTextNode('Mail-Programm hat sich nicht geöffnet? '));
+    var a = document.createElement('a'); a.href = link; a.textContent = 'Erneut öffnen'; p.appendChild(a);
+    p.appendChild(document.createTextNode(' oder '));
+    var b = document.createElement('a'); b.href = '#'; b.textContent = 'Text kopieren';
+    b.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { b.textContent = 'Kopiert, bitte an ' + EMPFAENGER + ' schicken'; }, function () {});
     });
-    knoepfe.appendChild(a); knoepfe.appendChild(kopie);
-    var hinweis = document.createElement('p'); hinweis.className = 'hint';
-    hinweis.textContent = 'Falls sich kein Mail-Programm öffnet oder der Text abgeschnitten ist: „Text kopieren“ und selbst eine Mail an ' + EMPFAENGER + ' schreiben.';
-    box.appendChild(h); box.appendChild(pre); box.appendChild(knoepfe); box.appendChild(hinweis);
-    erfolg.insertBefore(box, erfolg.querySelector('.done__actions'));
+    p.appendChild(b);
+    var erfolg = document.getElementById('erfolg');
+    erfolg.insertBefore(p, erfolg.querySelector('.done__actions'));
   }
 })();
