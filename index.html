@@ -86,19 +86,19 @@
     </div>
 
     <div class="grid">
-      <div class="field"><label for="vorname">Vorname</label><input id="vorname" name="vorname" required autocomplete="given-name"></div>
-      <div class="field"><label for="name">Nachname</label><input id="name" name="name" required autocomplete="family-name"></div>
-      <div class="field" data-neu><label for="geburtsdatum">Geburtsdatum</label><input id="geburtsdatum" name="geburtsdatum" type="date" required autocomplete="bday" max=""></div>
+      <div class="field"><label for="vorname">Vorname</label><input id="vorname" name="vorname" required autocomplete="given-name" autocapitalize="words"></div>
+      <div class="field"><label for="name">Nachname</label><input id="name" name="name" required autocomplete="family-name" autocapitalize="words"></div>
+      <div class="field" data-neu><label for="geburtsdatum">Geburtsdatum</label><input id="geburtsdatum" name="geburtsdatum" type="text" inputmode="numeric" maxlength="10" placeholder="TT.MM.JJJJ" data-datum required autocomplete="bday"></div>
       <div class="field"><label for="telefon">Telefon <span class="opt">(optional)</span></label><input id="telefon" name="telefon" type="tel" autocomplete="tel"></div>
-      <div class="field field--wide"><label for="email">E-Mail</label><input id="email" name="email" type="email" required autocomplete="email" inputmode="email"></div>
-      <div class="field field--wide"><label for="strasse">Straße und Hausnummer</label><input id="strasse" name="strasse" required autocomplete="street-address"></div>
-      <div class="field field--plz"><label for="plz">PLZ</label><input id="plz" name="plz" required inputmode="numeric" maxlength="5" autocomplete="postal-code"></div>
-      <div class="field field--ort"><label for="ort">Ort</label><input id="ort" name="ort" required autocomplete="address-level2"></div>
+      <div class="field field--wide"><label for="email">E-Mail</label><input id="email" name="email" type="email" required autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false"></div>
+      <div class="field field--wide"><label for="strasse">Straße und Hausnummer</label><input id="strasse" name="strasse" required autocomplete="address-line1" autocapitalize="words"></div>
+      <div class="field field--plz"><label for="plz">PLZ</label><input id="plz" name="plz" required inputmode="numeric" pattern="[0-9]*" maxlength="5" autocomplete="postal-code"></div>
+      <div class="field field--ort"><label for="ort">Ort</label><input id="ort" name="ort" required autocomplete="address-level2" autocapitalize="words"></div>
     </div>
 
     <div id="vormund" class="reveal" hidden>
       <p class="notice">Du bist unter 18. Bitte trage hier eine erziehungsberechtigte Person ein. Sie bestätigt die Anmeldung.</p>
-      <div class="field"><label for="erziehungsberechtigt">Vor- und Nachname der erziehungsberechtigten Person</label><input id="erziehungsberechtigt" name="erziehungsberechtigt"></div>
+      <div class="field"><label for="erziehungsberechtigt">Vor- und Nachname der erziehungsberechtigten Person</label><input id="erziehungsberechtigt" name="erziehungsberechtigt" autocomplete="off" autocapitalize="words"></div>
     </div>
 
     <div class="actions"><button type="button" class="btn btn--ghost" data-prev>Zurück</button><button type="button" class="btn" data-next>Weiter</button></div>
@@ -137,10 +137,10 @@
           </fieldset>
         </div>
         <div class="grid">
-          <div class="field"><label data-for="vorname">Vorname</label><input data-f="vorname"></div>
-          <div class="field"><label data-for="name">Nachname</label><input data-f="name"></div>
-          <div class="field"><label data-for="geburtsdatum">Geburtsdatum</label><input data-f="geburtsdatum" type="date"></div>
-          <div class="field kind__bisher"><label data-for="bisher">Bisherige Ausbildung <span class="opt">(optional)</span></label><input data-f="bisher" placeholder="z. B. Früherziehung"></div>
+          <div class="field"><label data-for="vorname">Vorname</label><input data-f="vorname" autocomplete="off" autocapitalize="words"></div>
+          <div class="field"><label data-for="name">Nachname</label><input data-f="name" autocomplete="off" autocapitalize="words"></div>
+          <div class="field"><label data-for="geburtsdatum">Geburtsdatum</label><input data-f="geburtsdatum" type="text" inputmode="numeric" maxlength="10" placeholder="TT.MM.JJJJ" data-datum autocomplete="off"></div>
+          <div class="field kind__bisher"><label data-for="bisher">Bisherige Ausbildung <span class="opt">(optional)</span></label><input data-f="bisher" autocomplete="off" placeholder="z. B. Früherziehung"></div>
         </div>
         <p class="hint">Dein Kind ist automatisch Mitglied und zahlt keinen Mitgliedsbeitrag. Mit 18 wird es selbst Mitglied, als aktives Mitglied weiterhin ohne Beitrag.</p>
 
@@ -152,7 +152,7 @@
         </fieldset>
 
         <div class="kind__instrument reveal" hidden>
-          <div class="field"><label data-for="instrument">Instrument</label><input data-f="instrument" placeholder="z. B. Klarinette, Trompete, Schlagzeug"></div>
+          <div class="field"><label data-for="instrument">Instrument</label><input data-f="instrument" autocomplete="off" placeholder="z. B. Klarinette, Trompete, Schlagzeug"></div>
           <fieldset class="choice-group choice-group--inline">
             <legend>Instrument mieten?</legend>
             <label class="pill"><input type="radio" data-f="miete" value="ja"><span>ja</span></label>
@@ -185,17 +185,17 @@
 
       <div id="kontoinhaber" class="reveal" hidden>
         <div class="grid">
-          <div class="field"><label for="ki_vorname">Vorname</label><input id="ki_vorname" name="ki_vorname"></div>
-          <div class="field"><label for="ki_name">Nachname</label><input id="ki_name" name="ki_name"></div>
-          <div class="field field--wide"><label for="ki_strasse">Straße und Hausnummer</label><input id="ki_strasse" name="ki_strasse"></div>
-          <div class="field field--plz"><label for="ki_plz">PLZ</label><input id="ki_plz" name="ki_plz" maxlength="10"></div>
-          <div class="field field--ort"><label for="ki_ort">Ort</label><input id="ki_ort" name="ki_ort"></div>
+          <div class="field"><label for="ki_vorname">Vorname</label><input id="ki_vorname" name="ki_vorname" autocomplete="off" autocapitalize="words"></div>
+          <div class="field"><label for="ki_name">Nachname</label><input id="ki_name" name="ki_name" autocomplete="off" autocapitalize="words"></div>
+          <div class="field field--wide"><label for="ki_strasse">Straße und Hausnummer</label><input id="ki_strasse" name="ki_strasse" autocomplete="off" autocapitalize="words"></div>
+          <div class="field field--plz"><label for="ki_plz">PLZ</label><input id="ki_plz" name="ki_plz" maxlength="10" autocomplete="off"></div>
+          <div class="field field--ort"><label for="ki_ort">Ort</label><input id="ki_ort" name="ki_ort" autocomplete="off" autocapitalize="words"></div>
         </div>
       </div>
 
       <div class="grid">
         <div class="field field--wide"><label for="iban">IBAN</label><input id="iban" name="iban" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="DE00 0000 0000 0000 0000 00"></div>
-        <div class="field field--wide"><label for="bank">Name des Kreditinstituts</label><input id="bank" name="bank" required autocomplete="off"></div>
+        <div class="field field--wide"><label for="bank">Name des Kreditinstituts</label><input id="bank" name="bank" required autocomplete="off" autocapitalize="words"></div>
         <div class="field field--wide" id="bic-feld" hidden><label for="bic">BIC <span class="opt">(bei Konten außerhalb Deutschlands)</span></label><input id="bic" name="bic" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="11"></div>
       </div>
 
@@ -252,7 +252,7 @@
     <div class="field"><label for="anmerkung">Anmerkung <span class="opt">(optional)</span></label><textarea id="anmerkung" name="anmerkung" rows="3" maxlength="600" placeholder="z. B. Wunschtermin oder Fragen an den Vorstand"></textarea></div>
 
     <h3>Bestätigung</h3>
-    <div class="field"><label for="unterschrift" id="unterschrift-label">Vor- und Nachname als Unterschrift</label><input id="unterschrift" name="unterschrift" required autocomplete="name"></div>
+    <div class="field"><label for="unterschrift" id="unterschrift-label">Vor- und Nachname als Unterschrift</label><input id="unterschrift" name="unterschrift" required autocomplete="name" autocapitalize="words"></div>
     <label class="check"><input type="checkbox" name="bestaetigt" value="ja" required><span>Ich bestätige, dass die Angaben richtig sind. Mein oben eingegebener Name gilt als Unterschrift.</span></label>
     <p class="hint">Datum: <span id="heute"></span>. Bei Minderjährigen unterschreibt die erziehungsberechtigte Person.</p>
 

@@ -28,7 +28,34 @@
   var heute = new Date();
   $('heute').textContent = heute.toLocaleDateString('de-DE');
   var iso = heute.getFullYear() + '-' + ('0' + (heute.getMonth() + 1)).slice(-2) + '-' + ('0' + heute.getDate()).slice(-2);
-  Array.prototype.forEach.call(form.querySelectorAll('input[type=date]'), function (d) { d.max = iso; });
+
+  /* ---------- Datum als Text (TT.MM.JJJJ): auf dem Handy schneller als ein Kalender ---------- */
+  function isoDatum(v) {   // "24.05.1985" -> "1985-05-24", ungültig -> ""
+    var m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec((v || '').trim());
+    if (!m) return '';
+    var d = new Date(+m[3], +m[2] - 1, +m[1]);
+    return d.getFullYear() === +m[3] && d.getMonth() === +m[2] - 1 && d.getDate() === +m[1] ? m[3] + '-' + m[2] + '-' + m[1] : '';
+  }
+  function datumFehler(v) {
+    var i = isoDatum(v);
+    if (!i || i < '1900-01-01') return 'Bitte im Format TT.MM.JJJJ eingeben, z. B. 24.05.1985.';
+    if (i > iso) return 'Das Datum liegt in der Zukunft.';
+    return '';
+  }
+  form.addEventListener('input', function (e) {   // Punkte automatisch setzen
+    var el = e.target; if (!el.hasAttribute || !el.hasAttribute('data-datum')) return;
+    var v = el.value.replace(/[^\d.]/g, ''), m;
+    if (/^\d{3,8}$/.test(v)) v = v.slice(0, 2) + '.' + v.slice(2, 4) + (v.length > 4 ? '.' + v.slice(4) : '');   // nur Ziffern
+    else if ((m = /^(\d{1,2})\.(\d{3,6})$/.exec(v))) v = m[1] + '.' + m[2].slice(0, 2) + '.' + m[2].slice(2);
+    if (e.inputType && e.inputType.indexOf('delete') !== 0 && /^(\d{2}|\d{1,2}\.\d{2})$/.test(v)) v += '.';
+    if (v !== el.value) el.value = v;
+  });
+  form.addEventListener('focusout', function (e) {   // 1.4.1985 oder 01041985 -> 01.04.1985
+    var el = e.target; if (!el.hasAttribute || !el.hasAttribute('data-datum')) return;
+    var v = el.value.trim(), m = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec(v) || /^(\d{2})(\d{2})(\d{4})$/.exec(v);
+    if (m) el.value = ('0' + m[1]).slice(-2) + '.' + ('0' + m[2]).slice(-2) + '.' + m[3];
+    if (el.name === 'geburtsdatum') updateUI();
+  });
 
   /* ---------- Kinder (beliebig viele, höchstens 6) ---------- */
   var MAX_KINDER = 6, kindUid = 0;
@@ -61,7 +88,6 @@
     var k = $('kind-vorlage').content.firstElementChild.cloneNode(true), uid = ++kindUid;
     Array.prototype.forEach.call(k.querySelectorAll('input:not([type=radio]):not([type=checkbox])'), function (el) { el.id = 'k' + uid + '_' + el.getAttribute('data-f'); });
     Array.prototype.forEach.call(k.querySelectorAll('label[data-for]'), function (l) { l.htmlFor = 'k' + uid + '_' + l.getAttribute('data-for'); });
-    kf(k, 'geburtsdatum').max = iso;
     $('kinder').appendChild(k);
     nummeriere();
     nachnameVorschlagen();
@@ -89,7 +115,7 @@
     if (m < 0 || (m === 0 && n.getDate() < b.getDate())) a--;
     return a;
   }
-  function isMinor() { if (existing()) return false; var a = age(val('geburtsdatum')); return a !== null && a < 18; }
+  function isMinor() { if (existing()) return false; var a = age(isoDatum(val('geburtsdatum'))); return a !== null && a >= 0 && a < 18; }
 
   /* ---------- Oberfläche je nach Auswahl ---------- */
   function updateUI() {
@@ -216,6 +242,7 @@
         return;
       }
       if (!el.value.trim()) { bad(el, 'Bitte ausfüllen.'); return; }
+      if (el.hasAttribute('data-datum') && datumFehler(el.value)) bad(el, datumFehler(el.value));
       if (el.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(el.value.trim())) bad(el, 'Bitte eine gültige E-Mail-Adresse eingeben.');
       if (el.name === 'plz' && !/^[0-9]{5}$/.test(el.value.trim())) bad(el, 'Bitte eine 5-stellige PLZ eingeben.');
     });
@@ -230,7 +257,15 @@
     if (key === 'anliegen' && anliegen() === 'kind' && checked('mitglied_status') && checked('mitglied_status') !== 'ja' && !checked('eltern_aktiv')) {
       bad(form.querySelector('[name=eltern_aktiv]'), 'Bitte eine Auswahl treffen.');
     }
-    if (key === 'daten' && isMinor() && !val('erziehungsberechtigt')) {
+    var datumUnplausibel = false;
+    if (key === 'daten' && !existing() && val('geburtsdatum') && !datumFehler(val('geburtsdatum'))) {
+      // Plausibilität: z. B. versehentlich das aktuelle Jahr im Kalender gewählt
+      var alterJahre = age(isoDatum(val('geburtsdatum')));
+      datumUnplausibel = alterJahre < (anliegen() === 'kind' ? 16 : 6);
+      if (anliegen() === 'kind' && alterJahre < 16) bad(form.elements.geburtsdatum, 'Bitte prüfe das Geburtsdatum. Hier gehört dein eigenes Geburtsdatum als Elternteil hin.');
+      else if (alterJahre < 6) bad(form.elements.geburtsdatum, 'Bitte prüfe das Geburtsdatum.');
+    }
+    if (key === 'daten' && !datumUnplausibel && isMinor() && !val('erziehungsberechtigt')) {
       bad(form.elements.erziehungsberechtigt, 'Bitte eine erziehungsberechtigte Person eintragen.');
     }
     if (key === 'kind') {
@@ -238,6 +273,7 @@
         if (!kv(k, 'status')) { bad(kf(k, 'status'), 'Bitte eine Auswahl treffen.'); return; }
         if (kv(k, 'status') === 'neu' && !kv(k, 'geschlecht')) bad(kf(k, 'geschlecht'), 'Bitte eine Auswahl treffen.');
         ['vorname', 'name', 'geburtsdatum'].forEach(function (f) { if (!kv(k, f)) bad(kf(k, f), 'Bitte ausfüllen.'); });
+        if (kv(k, 'geburtsdatum') && datumFehler(kv(k, 'geburtsdatum'))) bad(kf(k, 'geburtsdatum'), datumFehler(kv(k, 'geburtsdatum')));
         if (!kv(k, 'kurs')) bad(kf(k, 'kurs'), 'Bitte eine Ausbildung wählen.');
         if (kv(k, 'kurs') === 'Instrumentalausbildung') {
           if (!kv(k, 'instrument')) bad(kf(k, 'instrument'), 'Bitte das Instrument angeben.');
@@ -272,7 +308,6 @@
   }
 
   /* ---------- Zusammenfassung ---------- */
-  function datumDe(s) { var p = (s || '').split('-'); return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : s; }
   function maskiert(i) { return i.slice(0, 4) + ' •••• •••• ' + i.slice(-4); }
   function summary() {
     var a = anliegen(), ex = existing(), g = [];
@@ -283,7 +318,7 @@
     g.push({ key: 'anliegen', titel: 'Anliegen', rows: [['Anmeldung', wasText]] });
 
     var d = [['Name', val('vorname') + ' ' + val('name')]];
-    if (!ex) { d.push(['Geschlecht', checked('geschlecht')]); d.push(['Geburtsdatum', datumDe(val('geburtsdatum'))]); }
+    if (!ex) { d.push(['Geschlecht', checked('geschlecht')]); d.push(['Geburtsdatum', val('geburtsdatum')]); }
     if (isMinor()) d.push(['Erziehungsberechtigt', val('erziehungsberechtigt')]);
     d.push(['Anschrift', val('strasse') + ', ' + val('plz') + ' ' + val('ort')]);
     d.push(['E-Mail', val('email')]);
@@ -293,7 +328,7 @@
     if (a === 'kind') {
       var alle = kinder();
       alle.forEach(function (kd, i) {
-        var k = [['Name', kv(kd, 'vorname') + ' ' + kv(kd, 'name')], ['Geburtsdatum', datumDe(kv(kd, 'geburtsdatum'))], ['Ausbildung', kv(kd, 'kurs')]];
+        var k = [['Name', kv(kd, 'vorname') + ' ' + kv(kd, 'name')], ['Geburtsdatum', kv(kd, 'geburtsdatum')], ['Ausbildung', kv(kd, 'kurs')]];
         if (kv(kd, 'kurs') === 'Instrumentalausbildung') { k.push(['Instrument', kv(kd, 'instrument')]); k.push(['Instrument mieten', kv(kd, 'miete')]); }
         if (i > 0) k.push(['Ermäßigung', 'ja (2. Kind oder weiteres)']);
         else if (kv(kd, 'ermaessigung')) k.push(['Ermäßigung', 'ja (Geschwisterkind schon in Ausbildung)']);
@@ -354,11 +389,22 @@
     else if (e.target.matches('[data-prev]')) { step(-1); }
     else if (e.target.matches('[data-goto]')) { go(e.target.getAttribute('data-goto')); }
   });
+  // Enter/Return springt ins nächste Feld; erst im letzten Feld geht es zum nächsten Schritt
+  function textfelder() {
+    return Array.prototype.filter.call(sections[current].querySelectorAll('input:not([type=radio]):not([type=checkbox]):not([type=hidden])'),
+      function (el) { return !el.disabled && el.offsetParent !== null; });
+  }
   form.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' && (e.target.tagName === 'INPUT') && e.target.type !== 'submit') {
-      e.preventDefault();
-      if (current !== 'pruefen' && validate(current)) step(1);
-    }
+    if (e.key !== 'Enter' || e.target.tagName !== 'INPUT' || e.target.type === 'submit') return;
+    e.preventDefault();
+    var felder = textfelder(), i = felder.indexOf(e.target);
+    if (i > -1 && i < felder.length - 1) { felder[i + 1].focus(); return; }
+    if (current !== 'pruefen' && validate(current)) step(1);
+  });
+  form.addEventListener('focusin', function (e) {   // Beschriftung der Return-Taste auf dem Handy
+    if (e.target.tagName !== 'INPUT' || e.target.type === 'radio' || e.target.type === 'checkbox') return;
+    var felder = textfelder();
+    e.target.enterKeyHint = felder.indexOf(e.target) < felder.length - 1 ? 'next' : (current === 'pruefen' ? 'done' : 'go');
   });
 
   /* ---------- Absenden ---------- */
@@ -376,6 +422,7 @@
     data.set('iban', cleanIban(val('iban')));
     data.set('kontoinhaber_gleich', $('gleich').checked ? 'ja' : 'nein');
     data.set('minderjaehrig', isMinor() ? 'ja' : 'nein');
+    Array.prototype.forEach.call(form.querySelectorAll('[data-datum]'), function (el) { if (el.name) data.set(el.name, isoDatum(el.value)); });   // Server erwartet JJJJ-MM-TT
 
     fetch('senden.php', { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
       .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
