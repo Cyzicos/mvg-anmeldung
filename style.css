@@ -4,14 +4,11 @@
    Farben hier zentral anpassen:
    ========================================================== */
 
-/* Schrift "Khand": liegt bereits auf der Vereinswebsite (selbst gehostet,
-   keine Anfrage an Google). Fehlt sie, wird Arial verwendet. */
-@font-face { font-family: "Khand"; font-style: normal; font-weight: 400; font-display: swap;
-  src: url("/wp-content/uploads/fusion-gfonts/TwMA-IINQlQQ0bpSUnQ.woff2") format("woff2"); }
-@font-face { font-family: "Khand"; font-style: normal; font-weight: 600; font-display: swap;
-  src: url("/wp-content/uploads/fusion-gfonts/TwMN-IINQlQQ0bKNdmEwbQc.woff2") format("woff2"); }
-@font-face { font-family: "Khand"; font-style: normal; font-weight: 700; font-display: swap;
-  src: url("/wp-content/uploads/fusion-gfonts/TwMN-IINQlQQ0bLpd2EwbQc.woff2") format("woff2"); }
+/* Schrift "Khand" wie auf der Website, liegt im Ordner fonts/ (keine Anfrage an Google).
+   Fehlt sie, wird Arial verwendet. */
+@font-face { font-family: "Khand"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/khand-400.woff2") format("woff2"); }
+@font-face { font-family: "Khand"; font-style: normal; font-weight: 600; font-display: swap; src: url("fonts/khand-600.woff2") format("woff2"); }
+@font-face { font-family: "Khand"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/khand-700.woff2") format("woff2"); }
 
 :root {
   --brand: #cc0000;      /* Vereinsrot: Kopfbereich, Buttons, Überschriften */
