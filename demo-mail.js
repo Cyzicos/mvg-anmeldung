@@ -8,7 +8,9 @@
 (function () {
   'use strict';
 
-  var EMPFAENGER = 'jugend@musikverein-grafenau.de';   // zum Testen z. B. eine eigene Adresse eintragen
+  // zum Testen z. B. eine eigene Adresse eintragen
+  var EMPFAENGER = 'jugend@musikverein-grafenau.de';            // Anmeldung von Kindern zur Ausbildung
+  var EMPFAENGER_MITGLIED = 'edv@musikverein-grafenau.de';      // selbst Mitglied werden (aktiv oder fördernd)
   var MIN_SEKUNDEN = 8;
 
   var originalFetch = window.fetch.bind(window);
@@ -158,14 +160,15 @@
     var text = z.join('\n') + '\n';
 
     window.DEMO_LETZTE_MAIL = { betreff: betreff, text: text };   // zum Prüfen in der Browser-Konsole
-    var link = 'mailto:' + EMPFAENGER + '?subject=' + encodeURIComponent(betreff) + '&body=' + encodeURIComponent(text.replace(/\n/g, '\r\n'));
-    erfolgsseite(link, text);
+    var an = kind ? EMPFAENGER : EMPFAENGER_MITGLIED;
+    var link = 'mailto:' + an + '?subject=' + encodeURIComponent(betreff) + '&body=' + encodeURIComponent(text.replace(/\n/g, '\r\n'));
+    erfolgsseite(link, text, an);
     window.location.href = link;          // öffnet das Mail-Programm mit der fertigen Mail
     return Promise.resolve({ ok: true }); // danach zeigt app.js die Erfolgsseite
   }
 
   /* Erfolgsseite: Der Antrag ist erst angekommen, wenn die Mail abgeschickt wurde */
-  function erfolgsseite(link, text) {
+  function erfolgsseite(link, text, an) {
     var erfolg = document.getElementById('erfolg');
     erfolg.querySelector('h2').textContent = 'Fast fertig. Antrag an deinen Musikverein Grafenau schicken';
     erfolg.querySelector('p').textContent = 'Dein Mail-Programm hat sich mit dem fertigen Antrag geöffnet. Bitte schick die Mail jetzt ab. Erst dann ist dein Antrag beim Vorstand.';
@@ -181,7 +184,7 @@
     knoepfe.appendChild(a); knoepfe.appendChild(kopie);
     var hinweis = document.createElement('p'); hinweis.className = 'hint';
     hinweis.appendChild(document.createTextNode('Es hat sich kein Mail-Programm geöffnet, oder der Text ist abgeschnitten? Dann kopiere den Antrag und schick ihn per Mail an '));
-    var mail = document.createElement('a'); mail.href = 'mailto:' + EMPFAENGER; mail.textContent = EMPFAENGER;
+    var mail = document.createElement('a'); mail.href = 'mailto:' + an; mail.textContent = an;
     hinweis.appendChild(mail); hinweis.appendChild(document.createTextNode('.'));
     box.appendChild(knoepfe); box.appendChild(hinweis);
     erfolg.insertBefore(box, erfolg.querySelector('#erfolg-mandat'));

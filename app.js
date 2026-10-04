@@ -435,7 +435,8 @@
       })
       .catch(function (err) {
         box.textContent = (err && err.message ? err.message + ' ' : 'Das Senden hat leider nicht geklappt. ') +
-          'Deine Eingaben sind noch da. Bitte versuche es gleich noch einmal oder schreibe an jugend@musikverein-grafenau.de.';
+          'Deine Eingaben sind noch da. Bitte versuche es gleich noch einmal oder schreibe an ' +
+          (anliegen() === 'kind' ? 'jugend' : 'edv') + '@musikverein-grafenau.de.';
         box.hidden = false;
         btn.disabled = false; btn.textContent = 'Anmeldung absenden';
       });
